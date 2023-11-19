@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 // (function getSum(...args) {
 //   console.log(args);
