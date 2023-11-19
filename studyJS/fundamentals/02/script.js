@@ -34,27 +34,3 @@
 // }
 
 // console.log(Math.trunc(-9.99), Math.floor(-9.99)); // -9 -10
-
-const calcTip = function (bill) {
-  return bill >= 50 && bill <= 300 ? bill * 0.15 : bill * 0.2;
-}
-
-/* Write your code below. Good luck! 🙂 */
-
-const bills = [22, 295, 176, 440, 37, 105, 10, 1100, 86, 52],
-    tips = [],
-    totals = [];
-    
-for (let i = 0; i < bills.length; i++) {
-    tips[i] = calcTip(bills[i]);
-    totals[i] = tips[i] + bills[i];
-}
-
-console.log(calcAverage(totals));
-
-function calcAverage(arr) {
-    return arr.reduce((acc, curr) => {
-        acc += curr;
-        return acc / arr.length;
-    });
-}
