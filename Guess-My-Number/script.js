@@ -12,71 +12,109 @@ const game = {
   score: 20,
   highscore: 0,
   secretNumber: getRandomInt(1, 20),
+  decreaseScore: function (value) {
+    this.score -= value;
+  },
+  setScore: function (value) {
+    this.score = value;
+  },
+  setSecretNumber: function (value) {
+    this.secretNumber = value;
+  },
+  setHighscore: function (value) {
+    this.highscore = value;
+  },
 };
-console.log(game.secretNumber);
 
 // <-- Event handlers -->
 checkBtn.addEventListener('click', checkGuess);
+againBtn.addEventListener('click', resetGame);
+
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') checkGuess();
-});
-
-againBtn.addEventListener('click', resetGame);
-document.addEventListener('keydown', (e) => {
   if (e.key === 'r') resetGame();
 });
 
+// <-- Game logic -->
 function checkGuess() {
   const guessInputValue = Number(guessInputEl.value);
 
   if (!guessInputValue) {
-    messageEl.textContent = '🚫 No number!';
+    displayMessage('🚫 No number!');
   } else if (guessInputValue === game.secretNumber) {
-    changeBtnVisibility();
-
-    numberEl.textContent = game.secretNumber;
-    numberEl.style.width = '30rem';
-    document.body.style.backgroundColor = '#60b347';
-    messageEl.textContent = '🥳 Correct Number!';
+    changeBtnVisibility('hide');
+    displayMessage('🥳 Correct Number!');
+    displaySecretNumber(game.secretNumber);
+    changeNumberWidth('30rem');
+    changeBackgroundColor('#60b347');
 
     if (game.score > game.highscore) {
-      game.highscore = game.score;
-      highscoreEl.textContent = game.highscore;
+      game.setHighscore(game.score);
+      displayResult('highscore', game.highscore);
     }
   } else if (guessInputValue !== game.secretNumber) {
     if (game.score > 1) {
-      game.score--;
-      scoreEl.textContent = game.score;
-      messageEl.textContent =
-        guessInputValue > game.secretNumber ? '📈 Too hight!' : '📈 Too low!';
+      game.decreaseScore(1);
+      displayResult('score', game.score);
+      displayMessage(
+        guessInputValue > game.secretNumber ? '📈 Too hight!' : '📉 Too low!'
+      );
     } else {
-      scoreEl.textContent = 0;
-      messageEl.textContent = '❌ Game over!';
+      displayResult('score', 0);
+      displayMessage('❌ Game over!');
     }
   }
 }
 
 function resetGame() {
-  changeBtnVisibility();
-  game.score = 20;
-  game.secretNumber = getRandomInt(1, 20);
-  scoreEl.textContent = game.score;
-  messageEl.textContent = 'Start guessing...';
-  guessInputEl.value = '';
-  guessInputEl.focus();
-  numberEl.textContent = '?';
-  numberEl.style.width = '15rem';
-  document.body.style.backgroundColor = '#222';
-  console.log(game.secretNumber);
+  changeBtnVisibility('show');
+  game.setScore(20);
+  game.setSecretNumber(getRandomInt(1, 20));
+  displayResult('score', game.score);
+  displayMessage('Enter number...');
+  displaySecretNumber('?');
+  resetInputValue();
+  changeNumberWidth('15rem');
+  changeBackgroundColor('#222');
 }
 
-function changeBtnVisibility() {
-  const isDisabled = guessInputEl.disabled,
-    currBtnVisibility = checkBtn.style.visibility;
+function displayResult(elem, value) {
+  if (elem === 'highscore') {
+    highscoreEl.textContent = value;
+  } else if (elem === 'score' || !elem) {
+    scoreEl.textContent = value;
+  }
+}
 
-  guessInputEl.disabled = !isDisabled;
-  checkBtn.style.visibility =
-    currBtnVisibility === 'hidden' ? 'visible' : 'hidden';
+function displayMessage(textMessage) {
+  messageEl.textContent = textMessage;
+}
+
+function displaySecretNumber(value) {
+  numberEl.textContent = value;
+}
+
+function resetInputValue() {
+  guessInputEl.value = '';
+  guessInputEl.focus();
+}
+
+function changeNumberWidth(value) {
+  numberEl.style.width = value;
+}
+
+function changeBackgroundColor(value) {
+  document.body.style.backgroundColor = value;
+}
+
+function changeBtnVisibility(option) {
+  if (option === 'hide') {
+    guessInputEl.disabled = true;
+    checkBtn.style.visibility = 'hidden';
+  } else if (option === 'show' || !option) {
+    guessInputEl.disabled = false;
+    checkBtn.style.visibility = 'visible';
+  }
 }
 
 function getRandomInt(min, max) {

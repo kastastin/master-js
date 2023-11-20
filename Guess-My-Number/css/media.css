@@ -1,0 +1,67 @@
+/* < 960px */
+@media screen and (orientation: landscape) and (max-width: 60em) {
+  h1 {
+    font-size: 3rem;
+  }
+
+  .number {
+    padding: 1.5rem 0rem;
+    font-size: 2rem;
+  }
+
+  .message {
+    margin-bottom: 7rem;
+  }
+
+  .btn {
+    padding: 1rem 1.5rem 0.75rem 1.5rem;
+    font-size: 1.5rem;
+  }
+
+  .again {
+    top: 1rem;
+    left: 1rem;
+  }
+}
+
+/* < 700px */
+@media screen and (orientation: portrait) and (max-width: 43.75em) {
+  :root {
+    font-size: 50%;
+  }
+
+  h1 {
+    line-height: 1.5;
+  }
+
+  main {
+    flex-direction: column-reverse;
+    justify-content: center;
+  }
+
+  .right {
+    display: flex;
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+
+  .label-score {
+    order: 1;
+  }
+
+  .label-highscore,
+  .label-score {
+    margin-bottom: 5rem;
+  }
+
+  .message {
+    margin-bottom: 5rem;
+  }
+}
+
+/* < 400px */
+@media screen and (max-width: 25em) {
+  :root {
+    font-size: 40%;
+  }
+}
