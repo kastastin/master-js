@@ -51,31 +51,35 @@ const game = {
 game.init();
 
 // <-- Rolling dice functionality -->
-btnRoll.addEventListener('click', () => {
-  const dice = getRandomInt(1, 6);
-  displayDiceEl(dice);
+document.addEventListener('click', (e) => {
+  const clickedElClass = e.target.className;
 
-  if (dice !== 1) {
-    game.setCurrScore('increase', dice);
-    displayScore('current');
-  } else {
-    switchPlayer();
+  if (clickedElClass.includes('btn--new')) game.init();
+
+  if (clickedElClass.includes('btn--roll')) {
+    const dice = getRandomInt(1, 6);
+    displayDiceEl(dice);
+
+    if (dice !== 1) {
+      game.setCurrScore('increase', dice);
+      displayScore('current');
+    } else {
+      switchPlayer();
+    }
+  }
+
+  if (clickedElClass.includes('btn--hold')) {
+    game.increaseTotalScore();
+    displayScore('total');
+
+    if (game.players[game.activePlayer].totalScore >= 100) {
+      changeElemClass([diceEl, btnRoll, btnHold], 'add', 'hidden');
+      displayWinner();
+    } else {
+      switchPlayer();
+    }
   }
 });
-
-btnHold.addEventListener('click', () => {
-  game.increaseTotalScore();
-  displayScore('total');
-
-  if (game.players[game.activePlayer].totalScore >= 20) {
-    changeElemClass([diceEl, btnRoll, btnHold], 'add', 'hidden');
-    displayWinner();
-  } else {
-    switchPlayer();
-  }
-});
-
-btnNew.addEventListener('click', game.init);
 
 function switchPlayer() {
   game.setCurrScore('reset');
