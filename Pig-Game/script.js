@@ -1,103 +1,133 @@
 'use strict';
 
 const diceEl = document.querySelector('.dice'),
-  score0El = document.querySelector('#score--0'),
-  score1El = document.querySelector('#score--1'),
-  currScore0El = document.querySelector('#current--0'),
-  currScore1El = document.querySelector('#current--1'),
   player0El = document.querySelector('.player--0'),
   player1El = document.querySelector('.player--1'),
   btnRoll = document.querySelector('.btn--roll'),
   btnHold = document.querySelector('.btn--hold'),
   btnNew = document.querySelector('.btn--new');
 
-let scores, currScore, activePlayer, playing;
-initGameSettings();
+const game = {
+  activePlayer: 0,
+  players: [
+    { totalScore: 0, currScore: 0 },
+    { totalScore: 0, currScore: 0 },
+  ],
+  switchPlayer: function () {
+    this.activePlayer = this.activePlayer === 0 ? 1 : 0;
+  },
+  setCurrScore: function (option, value) {
+    if (option === 'reset') {
+      this.players[this.activePlayer].currScore = 0;
+    } else if (option === 'increase') {
+      this.players[this.activePlayer].currScore += value;
+    } else {
+      throw new Error('option argument error');
+    }
+  },
+  increaseTotalScore: function () {
+    this.players[this.activePlayer].totalScore +=
+      this.players[this.activePlayer].currScore;
+  },
+  init: function () {
+    game.activePlayer = 0;
+    game.players = [
+      { totalScore: 0, currScore: 0 },
+      { totalScore: 0, currScore: 0 },
+    ];
+
+    ['#score--0', '#score--1', '#current--0', '#current--1'].forEach((elem) => {
+      document.querySelector(elem).textContent = 0;
+    });
+
+    changeElemClass(diceEl, 'add', 'hidden');
+    changeElemClass([btnRoll, btnHold], 'remove', 'hidden');
+    changeElemClass(player0El, 'add', 'player--active');
+    changeElemClass(player1El, 'remove', 'player--active');
+    changeElemClass([player0El, player1El], 'remove', 'player--winner');
+  },
+};
+
+game.init();
 
 // <-- Rolling dice functionality -->
 btnRoll.addEventListener('click', () => {
-  if (playing) {
-    const randomDiceNumber = getRandomInt(1, 6);
+  const dice = getRandomInt(1, 6);
+  displayDiceEl(dice);
 
-    displayDiceEl(randomDiceNumber);
-
-    if (randomDiceNumber != 1) {
-      currScore += randomDiceNumber;
-      setTimeout(() => {
-        document.getElementById(`current--${activePlayer}`).textContent =
-          currScore;
-      }, 500);
-    } else {
-      switchPlayer();
-    }
+  if (dice !== 1) {
+    game.setCurrScore('increase', dice);
+    displayScore('current');
+  } else {
+    switchPlayer();
   }
 });
 
 btnHold.addEventListener('click', () => {
-  if (playing) {
-    scores[activePlayer] += currScore;
+  game.increaseTotalScore();
+  displayScore('total');
 
-    document.getElementById(`score--${activePlayer}`).textContent =
-      scores[activePlayer];
-
-    if (scores[activePlayer] >= 20) {
-      playing = false;
-      diceEl.classList.add('hidden');
-      btnRoll.classList.add('hidden');
-      btnHold.classList.add('hidden');
-
-      document
-        .querySelector(`.player--${activePlayer}`)
-        .classList.add('player--winner');
-
-      document
-        .querySelector(`.player--${activePlayer}`)
-        .classList.remove('player--active');
-    } else {
-      switchPlayer();
-    }
+  if (game.players[game.activePlayer].totalScore >= 20) {
+    changeElemClass([diceEl, btnRoll, btnHold], 'add', 'hidden');
+    displayWinner();
+  } else {
+    switchPlayer();
   }
 });
 
-btnNew.addEventListener('click', initGameSettings);
-
-// <-- Initial game condition -->
-function initGameSettings() {
-  scores = [0, 0];
-  currScore = 0;
-  activePlayer = 0;
-  playing = true;
-
-  score0El.textContent = 0;
-  score1El.textContent = 0;
-  currScore0El.textContent = 0;
-  currScore1El.textContent = 0;
-
-  diceEl.classList.add('hidden');
-  player0El.classList.remove('player--winner');
-  player1El.classList.remove('player--winner');
-  player0El.classList.add('player--active');
-  player1El.classList.remove('player--active');
-}
+btnNew.addEventListener('click', game.init);
 
 function switchPlayer() {
-  document.getElementById(`current--${activePlayer}`).textContent = 0;
-  currScore = 0;
-  activePlayer = activePlayer === 0 ? 1 : 0;
-  setTimeout(() => {
-    player0El.classList.toggle('player--active');
-    player1El.classList.toggle('player--active');
-  }, 500);
+  game.setCurrScore('reset');
+  displayScore('current');
+  game.switchPlayer();
+  changeElemClass([player0El, player1El], 'toggle', 'player--active');
 }
 
-function displayDiceEl(num) {
-  diceEl.classList.remove('hidden');
-  diceEl.classList.add('dice--shake');
+function displayScore(option) {
+  const player = game.activePlayer;
 
-  setTimeout(() => {
-    diceEl.src = `img/dice-${num}.png`;
-    diceEl.classList.remove('dice--shake');
-  }, 500);
+  if (option === 'current') {
+    const currPlayerEl = document.getElementById(`current--${player}`);
+    currPlayerEl.textContent = game.players[player].currScore;
+  } else if (option === 'total') {
+    const totalPlayerEl = document.getElementById(`score--${player}`);
+    totalPlayerEl.textContent = game.players[player].totalScore;
+  } else {
+    throw new Error('option argument error');
+  }
+}
+
+function displayDiceEl(value) {
+  diceEl.src = `img/dice-${value}.png`;
+  changeElemClass(diceEl, 'remove', 'hidden');
+}
+
+function displayWinner() {
+  const playerEl = document.querySelector(`.player--${game.activePlayer}`);
+
+  changeElemClass(playerEl, 'add', 'player--winner');
+  changeElemClass(playerEl, 'remove', 'player--active');
+}
+
+function changeElemClass(elems, option, className) {
+  if (!Array.isArray(elems)) elems = [elems];
+
+  elems.forEach((elem) => {
+    switch (option) {
+      case 'add':
+        elem.classList.add(className);
+        break;
+      case 'remove':
+        elem.classList.remove(className);
+        break;
+      case 'toggle':
+        elem.classList.toggle(className);
+        break;
+      default:
+        throw new Error('option argument error');
+    }
+  });
 }
 
 function getRandomInt(min, max) {
