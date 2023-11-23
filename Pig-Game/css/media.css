@@ -58,11 +58,11 @@
   }
 
   .player {
-    padding: 10rem 3rem 0 3rem;
+    padding: 5rem 3rem 0 3rem;
   }
 
   .dice {
-    height: 8rem;
+    height: 6rem;
   }
 
   .btn {
@@ -71,19 +71,22 @@
 
   .btn--new {
     width: 50%;
-    top: 3rem;
+    top: 1rem;
   }
 
-  .btn--roll {
+  .btn--roll,
+  .btn--roll:active {
     transform: translate(10%, -50%);
   }
 
-  .btn--hold {
+  .btn--hold,
+  .btn--hold:active {
     transform: translate(88.5%, -50%);
   }
 
   .current {
-    padding: 0.1;
+    width: 50%;
+    padding: 0.2rem;
   }
 
   .score {
