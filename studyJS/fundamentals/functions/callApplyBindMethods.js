@@ -64,3 +64,5 @@ function addTax2(rate) {
 }
 const addVAT2 = addTax2(0.25);
 console.log(addVAT2(100));
+
+const obj = {}
