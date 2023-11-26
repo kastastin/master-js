@@ -1,0 +1,291 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600&display=swap');
+
+* {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  padding: 2rem;
+  background-color: #f3f3f3;
+  font-family: 'Poppins', sans-serif;
+  color: #444;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.welcome {
+  font-size: 1.9rem;
+  font-weight: 500;
+}
+
+.logo {
+  height: 5.25rem;
+}
+
+.login {
+  display: flex;
+}
+
+.login__input {
+  width: 12rem;
+  margin-right: 1rem;
+  padding: 0.5rem 2rem;
+  border: 1px solid #fff;
+  border-radius: 10rem;
+  color: inherit;
+  font-size: 1.6rem;
+  font-family: inherit;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.login__input:focus {
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.login__input::placeholder {
+  color: #bbb;
+}
+
+.login__btn {
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: 2.2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.login__btn:hover,
+.login__btn:focus,
+.btn--sort:hover,
+.btn--sort:focus {
+  color: #777;
+  outline: none;
+}
+
+/* MAIN */
+.app {
+  max-width: 100rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: 4fr 3fr;
+  grid-template-rows: auto repeat(3, 15rem) auto;
+  gap: 2rem;
+  margin: 4rem auto;
+
+  /* fade in/out animation */
+  /* opacity: 0; */
+  /* visibility: hidden; */
+  transition: all 1s;
+}
+
+.balance {
+  grid-column: 1 / span 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+}
+
+.balance__label {
+  margin-bottom: -0.2rem;
+  font-size: 2.2rem;
+  font-weight: 500;
+}
+
+.balance__date {
+  color: #888;
+  font-size: 1.4rem;
+}
+
+.balance__value {
+  font-size: 4.5rem;
+  font-weight: 400;
+}
+
+/* MOVEMENTS */
+.movements {
+  grid-row: 2 / span 3;
+  border-radius: 1rem;
+  background-color: #fff;
+  overflow: scroll;
+}
+
+.movements__row {
+  display: flex;
+  align-items: center;
+  padding: 2.25rem 4rem;
+  border-bottom: 1px solid #eee;
+}
+
+.movements__type {
+  margin-right: 2rem;
+  padding: 0.1rem 1rem;
+  border-radius: 10rem;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.movements__date {
+  color: #666;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.movements__type--deposit {
+  background-image: linear-gradient(to top left, #39b385, #9be15d);
+}
+
+.movements__type--withdrawal {
+  background-image: linear-gradient(to top left, #e52a5a, #ff585f);
+}
+
+.movements__value {
+  margin-left: auto;
+  font-size: 1.7rem;
+}
+
+/* SUMMARY */
+.summary {
+  grid-row: 5 / 6;
+  display: flex;
+  align-items: baseline;
+  margin-top: 1rem;
+  padding: 0 0.3rem;
+}
+
+.summary__label {
+  margin-right: 0.8rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.summary__value {
+  margin-right: 2.5rem;
+  font-size: 2.2rem;
+}
+
+.summary__value--in,
+.summary__value--interest {
+  color: #66c873;
+}
+
+.summary__value--out {
+  color: #f5465d;
+}
+
+.btn--sort {
+  margin-left: auto;
+  border: none;
+  background: none;
+  font-size: 1.3rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* OPERATIONS */
+.operation {
+  padding: 3rem 4rem;
+  border-radius: 1rem;
+  color: #333;
+}
+
+.operation--transfer {
+  background-image: linear-gradient(to top left, #ffb003, #ffcb03);
+}
+
+.operation--loan {
+  background-image: linear-gradient(to top left, #39b385, #9be15d);
+}
+
+.operation--close {
+  background-image: linear-gradient(to top left, #e52a5a, #ff585f);
+}
+
+h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+  font-size: 1.7rem;
+  font-weight: 600;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 2.5fr 2.5fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 0.4rem 1rem;
+}
+
+.form.form--loan {
+  grid-template-columns: 2.5fr 1fr 2.5fr;
+}
+.form__label--loan {
+  grid-row: 2;
+}
+
+.form__input {
+  width: 100%;
+  padding: 0.3rem 1rem;
+  border: none;
+  border-radius: 0.7rem;
+  background-color: rgba(255, 255, 255, 0.4);
+  font-family: inherit;
+  color: #333;
+  font-size: 1.5rem;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.form__input:focus {
+  background-color: rgba(255, 255, 255, 0.6);
+  outline: none;
+}
+
+.form__label {
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.form__btn {
+  border: none;
+  border-radius: 0.7rem;
+  background-color: #fff;
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.form__btn:focus {
+  background-color: rgba(255, 255, 255, 0.8);
+  outline: none;
+}
+
+.logout-timer {
+  margin-top: 1.9rem;
+  padding: 0 0.3rem;
+  font-size: 1.25rem;
+  text-align: right;
+}
+
+.timer {
+  font-weight: 600;
+}
