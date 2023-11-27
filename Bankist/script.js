@@ -64,7 +64,70 @@ const currencies = new Map([
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
-displayMovements(account1.movements);
+let currAccount;
+createUsernames(accounts);
+
+// <-- Event handlers -->
+document.addEventListener('click', (e) => {
+  e.preventDefault();
+
+  // Login event
+  if (e.target.className === 'login__btn') {
+    currAccount = accounts.find(
+      (acc) => acc.username === inputLoginUsername.value
+    );
+
+    if (currAccount?.pin === Number(inputLoginPin.value)) {
+      labelWelcome.textContent = `Welcome back, ${
+        currAccount.owner.split(' ')[0]
+      }`;
+
+      containerApp.style.opacity = 1;
+      containerApp.style.visibility = 'visible';
+      inputLoginUsername.value = inputLoginPin.value = '';
+      inputLoginPin.blur();
+
+      displayMovements(currAccount.movements);
+      calcDisplayBalance(currAccount.movements);
+      calcDisplaySummary(currAccount);
+    }
+  }
+});
+
+function createUsernames(accounts) {
+  accounts.forEach((acc) => {
+    acc.username = acc.owner
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word[0])
+      .join('');
+  });
+}
+
+function calcDisplayBalance(movements) {
+  const balance = getSum(movements);
+  labelBalance.textContent = `${balance}€`;
+}
+
+function calcDisplaySummary(acc) {
+  const negativeMovements = acc.movements.filter((mov) => mov < 0),
+    positiveMovements = acc.movements.filter((mov) => mov > 0),
+    interestMovements = positiveMovements
+      .map((mov) => (mov * acc.interestRate) / 100)
+      .filter((mov) => mov >= 1);
+
+  const out = getSum(negativeMovements),
+    incomes = getSum(positiveMovements),
+    interest = getSum(interestMovements);
+
+  labelSumOut.textContent = `${Math.abs(out)}€`;
+  labelSumIn.textContent = `${incomes}€`;
+  labelSumInterest.textContent = `${interest}€`;
+}
+
+function getSum(arr) {
+  return arr.reduce((acc, curr) => acc + curr);
+}
 
 function displayMovements(movements) {
   containerMovements.innerHTML = '';
@@ -77,7 +140,7 @@ function displayMovements(movements) {
         <div class="movements__type movements__type--${type}">
           ${i + 1} ${type}
         </div>
-        <div class="movements__value">${val}</div>
+        <div class="movements__value">${val}€</div>
       </div>
     `;
 

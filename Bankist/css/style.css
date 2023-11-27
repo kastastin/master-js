@@ -20,6 +20,7 @@ body {
 }
 
 nav {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -33,6 +34,9 @@ nav {
 
 .logo {
   height: 5.25rem;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .login {
@@ -89,8 +93,8 @@ nav {
   margin: 4rem auto;
 
   /* fade in/out animation */
-  /* opacity: 0; */
-  /* visibility: hidden; */
+  opacity: 0;
+  visibility: hidden;
   transition: all 1s;
 }
 
