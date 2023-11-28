@@ -70,9 +70,10 @@ createUsernames(accounts);
 // <-- Event handlers -->
 document.addEventListener('click', (e) => {
   e.preventDefault();
+  const clickedElClass = e.target.className;
 
   // Login event
-  if (e.target.className === 'login__btn') {
+  if (clickedElClass === 'login__btn') {
     currAccount = accounts.find(
       (acc) => acc.username === inputLoginUsername.value
     );
@@ -86,10 +87,28 @@ document.addEventListener('click', (e) => {
       containerApp.style.visibility = 'visible';
       inputLoginUsername.value = inputLoginPin.value = '';
       inputLoginPin.blur();
+      updateUI(currAccount);
+    }
+  }
 
-      displayMovements(currAccount.movements);
-      calcDisplayBalance(currAccount.movements);
-      calcDisplaySummary(currAccount);
+  // Transfer event
+  if (clickedElClass.includes('form__btn--transfer')) {
+    const amount = Number(inputTransferAmount.value),
+      receiverAcc = accounts.find(
+        (acc) => acc.username === inputTransferTo.value
+      );
+
+    if (
+      amount > 0 &&
+      receiverAcc &&
+      currAccount.balance >= amount &&
+      receiverAcc?.username !== currAccount.username
+    ) {
+      currAccount.movements.push(-amount);
+      receiverAcc.movements.push(amount);
+      inputTransferTo.value = inputTransferAmount.value = '';
+      inputTransferAmount.blur();
+      updateUI(currAccount);
     }
   }
 });
@@ -104,9 +123,15 @@ function createUsernames(accounts) {
   });
 }
 
-function calcDisplayBalance(movements) {
-  const balance = getSum(movements);
-  labelBalance.textContent = `${balance}€`;
+function updateUI(acc) {
+  calcDisplayBalance(acc);
+  calcDisplaySummary(acc);
+  displayMovements(acc.movements);
+}
+
+function calcDisplayBalance(acc) {
+  acc.balance = getSum(acc.movements);
+  labelBalance.textContent = `${acc.balance}€`;
 }
 
 function calcDisplaySummary(acc) {
