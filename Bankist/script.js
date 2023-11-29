@@ -111,6 +111,38 @@ document.addEventListener('click', (e) => {
       updateUI(currAccount);
     }
   }
+
+  // Request loan event
+  if (clickedElClass.includes('form__btn--loan')) {
+    const amount = Number(inputLoanAmount.value);
+
+    if (
+      amount > 0 &&
+      currAccount.movements.some((mov) => mov >= amount * 0.1)
+    ) {
+      currAccount.movements.push(amount);
+      inputLoanAmount.value = '';
+      inputLoanAmount.blur();
+      updateUI(currAccount);
+    }
+  }
+
+  // Close account event
+  if (clickedElClass.includes('form__btn--close')) {
+    if (
+      inputCloseUsername.value === currAccount.username &&
+      Number(inputClosePin.value) === currAccount.pin
+    ) {
+      const index = accounts.findIndex(
+        (acc) => acc.username === currAccount.username
+      );
+      accounts.splice(index, 1);
+      containerApp.style.opacity = 0;
+      containerApp.style.visibility = 'hidden';
+      inputCloseUsername.value = inputClosePin.value = '';
+      inputClosePin.blur();
+    }
+  }
 });
 
 function createUsernames(accounts) {
