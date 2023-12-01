@@ -43,7 +43,7 @@ const account1 = {
     '2023-12-01T10:51:36.790Z',
   ],
   currency: 'EUR',
-  locale: 'pt-PT', // de-DE
+  locale: 'pt-PT',
 };
 
 const account2 = {
@@ -62,7 +62,7 @@ const account2 = {
     '2023-06-25T18:49:59.371Z',
     '2023-07-26T12:01:20.894Z',
   ],
-  currency: 'USD',
+  currency: 'EUR',
   locale: 'en-US',
 };
 
@@ -74,7 +74,8 @@ const currencies = new Map([
   ['GBP', 'Pound sterling'],
 ]);
 
-let currAccount,
+let timer,
+  currAccount,
   isMovementsSorted = false;
 
 createUsernames(accounts);
@@ -97,18 +98,25 @@ document.addEventListener('click', (e) => {
 
       // Display current date and time
       const now = new Date(),
-        day = `${now.getDate()}`.padStart(2, 0),
-        month = `${now.getMonth() + 1}`.padStart(2, 0),
-        year = now.getFullYear(),
-        hour = `${now.getHours()}`.padStart(2, 0),
-        min = `${now.getMinutes()}`.padStart(2, 0);
-      labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`;
+        locale = navigator.language, // en-US
+        options = {
+          hour: 'numeric',
+          minute: 'numeric',
+          day: 'numeric',
+          month: 'numeric',
+          year: 'numeric',
+        };
+      labelDate.textContent = new Intl.DateTimeFormat(
+        currAccount.locale,
+        options
+      ).format(now);
 
-      containerApp.style.opacity = 1;
-      containerApp.style.visibility = 'visible';
-      inputLoginUsername.value = inputLoginPin.value = '';
-      inputLoginPin.blur();
+      changeAccountOpacity('show');
       updateUI(currAccount);
+
+      // Timer
+      if (timer) clearInterval(timer);
+      timer = startLogoutTimer();
     }
   }
 
@@ -129,9 +137,12 @@ document.addEventListener('click', (e) => {
       receiverAcc.movements.push(amount);
       currAccount.movementsDates.push(new Date().toISOString());
       receiverAcc.movementsDates.push(new Date().toISOString());
-      inputTransferTo.value = inputTransferAmount.value = '';
-      inputTransferAmount.blur();
+      clearInputs();
       updateUI(currAccount);
+
+      // Reset timer
+      clearInterval(timer);
+      timer = startLogoutTimer();
     }
   }
 
@@ -143,11 +154,17 @@ document.addEventListener('click', (e) => {
       amount > 0 &&
       currAccount.movements.some((mov) => mov >= amount * 0.1)
     ) {
-      currAccount.movements.push(amount);
-      currAccount.movementsDates.push(new Date().toISOString());
-      inputLoanAmount.value = '';
-      inputLoanAmount.blur();
-      updateUI(currAccount);
+      setTimeout(() => {
+        currAccount.movements.push(amount);
+        currAccount.movementsDates.push(new Date().toISOString());
+        updateUI(currAccount);
+
+        // Reset timer
+        clearInterval(timer);
+        timer = startLogoutTimer();
+      }, 2000);
+
+      clearInputs();
     }
   }
 
@@ -161,10 +178,7 @@ document.addEventListener('click', (e) => {
         (acc) => acc.username === currAccount.username
       );
       accounts.splice(index, 1);
-      containerApp.style.opacity = 0;
-      containerApp.style.visibility = 'hidden';
-      inputCloseUsername.value = inputClosePin.value = '';
-      inputClosePin.blur();
+      changeAccountOpacity('hide');
     }
   }
 
@@ -185,6 +199,28 @@ function createUsernames(accounts) {
   });
 }
 
+function startLogoutTimer() {
+  let time = 120;
+
+  tick();
+  const timer = setInterval(tick, 1000);
+  return timer;
+
+  function tick() {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0),
+      sec = String(time % 60).padStart(2, 0);
+
+    labelTimer.textContent = `${min}:${sec}`;
+
+    if (time === 0) {
+      clearInterval(timer);
+      changeAccountOpacity('hide');
+      labelWelcome.textContent = 'Log in to get started';
+    }
+    time--;
+  }
+}
+
 function updateUI(acc) {
   calcDisplayBalance(acc);
   calcDisplaySummary(acc);
@@ -193,7 +229,7 @@ function updateUI(acc) {
 
 function calcDisplayBalance(acc) {
   acc.balance = getSum(acc.movements);
-  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
+  labelBalance.textContent = formatCurrency(acc.balance, acc);
 }
 
 function calcDisplaySummary(acc) {
@@ -207,9 +243,9 @@ function calcDisplaySummary(acc) {
     incomes = getSum(positiveMovements),
     interest = getSum(interestMovements);
 
-  labelSumOut.textContent = `${Math.abs(out).toFixed(2)}€`;
-  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
-  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+  labelSumOut.textContent = formatCurrency(Math.abs(out), acc);
+  labelSumIn.textContent = formatCurrency(incomes, acc);
+  labelSumInterest.textContent = formatCurrency(interest, acc);
 }
 
 function displayMovements(acc, sort = false) {
@@ -223,7 +259,8 @@ function displayMovements(acc, sort = false) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
 
     const date = new Date(acc.movementsDates[i]),
-      displayDate = formatMovementDate(date);
+      displayDate = formatMovementDate(date, acc.locale),
+      displayMov = formatCurrency(mov, acc);
 
     const html = `
       <div class="movements__row">
@@ -231,7 +268,7 @@ function displayMovements(acc, sort = false) {
           ${i + 1} ${type}
         </div>
         <div class="movements__date">${displayDate}</div>
-        <div class="movements__value">${mov.toFixed(2)}€</div>
+        <div class="movements__value">${displayMov}</div>
       </div>
     `;
 
@@ -239,7 +276,14 @@ function displayMovements(acc, sort = false) {
   });
 }
 
-function formatMovementDate(date) {
+function formatCurrency(value, acc) {
+  return new Intl.NumberFormat(acc.locale, {
+    style: 'currency',
+    currency: acc.currency,
+  }).format(value);
+}
+
+function formatMovementDate(date, locale) {
   const calcDaysPassed = (date1, date2) =>
     Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
 
@@ -249,10 +293,24 @@ function formatMovementDate(date) {
   if (daysPassed === 1) return 'Yesterday';
   if (daysPassed <= 7) return `${daysPassed} days ago`;
 
-  const day = `${date.getDate()}`.padStart(2, 0),
-    month = `${date.getMonth() + 1}`.padStart(2, 0),
-    year = date.getFullYear();
-  return `${day}/${month}/${year}`;
+  return new Intl.DateTimeFormat(locale).format(date);
+}
+
+function changeAccountOpacity(option = 'show') {
+  const opacity = option === 'hide' ? 0 : 1,
+    visibility = option === 'hide' ? 'hidden' : 'visible';
+
+  containerApp.style.opacity = opacity;
+  containerApp.style.visibility = visibility;
+  clearInputs();
+}
+
+function clearInputs() {
+  const inputEls = Array.from(document.querySelectorAll('input'));
+  inputEls.forEach((inputEl) => {
+    inputEl.value = '';
+    inputEl.blur();
+  });
 }
 
 function getSum(arr) {
