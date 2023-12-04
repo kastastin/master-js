@@ -16,7 +16,79 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// <-- Creating and inserting elements -->
+// <-- Smooth scrolling -->
+const section1El = document.querySelector('#section--1');
+
+document.addEventListener('click', (e) => {
+  const clickedElClass = e.target.classList;
+
+  // Navigation links
+  if (clickedElClass.contains('nav__link')) {
+    e.preventDefault();
+    const id = e.target.getAttribute('href');
+    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Learn more button
+  if (clickedElClass.contains('btn--scroll-to')) {
+    section1El.scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+// <-- Tabbed component -->
+const tabContainerEl = document.querySelector('.operations__tab-container'),
+  tabContentElems = document.querySelectorAll('.operations__content'),
+  tabElems = document.querySelectorAll('.operations__tab');
+
+tabContainerEl.addEventListener('click', (e) => {
+  const clickedTabEl = e.target.closest('.operations__tab');
+
+  if (!clickedTabEl) return;
+
+  // Remove all active classes
+  tabElems.forEach((el) => el.classList.remove('operations__tab--active'));
+  tabContentElems.forEach((el) =>
+    el.classList.remove('operations__content--active')
+  );
+
+  // Activate tab
+  clickedTabEl.classList.add('operations__tab--active');
+
+  // Activate content area
+  document
+    .querySelector(`.operations__content--${clickedTabEl.dataset.tab}`)
+    .classList.add('operations__content--active');
+});
+
+// <-- Menu fade animation -->
+const navEl = document.querySelector('.nav'),
+  logoEl = document.querySelector('#logo'),
+  navLinkElems = document.querySelectorAll('.nav__link');
+
+navEl.addEventListener('mouseover', changeOpacity.bind(0.5));
+navEl.addEventListener('mouseout', changeOpacity.bind(1));
+
+function changeOpacity(e) {
+  const clickedEl = e.target;
+
+  if (clickedEl.classList.contains('nav__link')) {
+    [logoEl, ...navLinkElems].forEach((el) => {
+      if (el !== clickedEl) el.style.opacity = this;
+    });
+  }
+}
+
+// <-- Sticky navigation -->
+const section1Coords = section1El.getBoundingClientRect(),
+  navCoords = navEl.getBoundingClientRect();
+
+window.addEventListener('scroll', () => {
+  window.scrollY > section1Coords.top - navCoords.height
+    ? navEl.classList.add('sticky')
+    : navEl.classList.remove('sticky');
+});
+
+// <-- Cookies message -->
 const header = document.querySelector('.header'),
   message = document.createElement('div');
 
@@ -29,25 +101,3 @@ header.prepend(message);
 document.querySelector('.btn--close-cookie').addEventListener('click', () => {
   message.parentElement.removeChild(message);
 });
-
-// <-- Smooth scrolling -->
-const scrollToBtn = document.querySelector('.btn--scroll-to'),
-  section1 = document.querySelector('#section--1');
-
-scrollToBtn.addEventListener('click', () => {
-  section1.scrollIntoView({ behavior: 'smooth' });
-});
-
-// <-- Event propagation -->
-console.log(getRndColor());
-
-function getRndColor() {
-  const [r, g, b] = Array.from({ length: 3 }, () => getRndInt(0, 255));
-
-  return `rgb(${r}, ${g}, ${b})`;
-}
-
-function getRndInt(min, max) {
-  let rnd = min + Math.random() * (max + 1 - min);
-  return Math.floor(rnd);
-}
