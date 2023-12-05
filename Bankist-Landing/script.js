@@ -1,9 +1,17 @@
 'use strict';
 
-// <-- Modal window -->
 const modalEl = document.querySelector('.modal'),
-  overlayEl = document.querySelector('.overlay');
+  overlayEl = document.querySelector('.overlay'),
+  section1El = document.querySelector('#section--1'),
+  tabContainerEl = document.querySelector('.operations__tab-container'),
+  tabContentElems = document.querySelectorAll('.operations__content'),
+  tabElems = document.querySelectorAll('.operations__tab'),
+  navEl = document.querySelector('.nav'),
+  logoEl = document.querySelector('#logo'),
+  navLinkElems = document.querySelectorAll('.nav__link'),
+  headerEl = document.querySelector('.header');
 
+// <-- Modal window -->
 document.addEventListener('click', (e) => {
   e.preventDefault();
 
@@ -17,8 +25,6 @@ document.addEventListener('click', (e) => {
 });
 
 // <-- Smooth scrolling -->
-const section1El = document.querySelector('#section--1');
-
 document.addEventListener('click', (e) => {
   const clickedElClass = e.target.classList;
 
@@ -36,10 +42,6 @@ document.addEventListener('click', (e) => {
 });
 
 // <-- Tabbed component -->
-const tabContainerEl = document.querySelector('.operations__tab-container'),
-  tabContentElems = document.querySelectorAll('.operations__content'),
-  tabElems = document.querySelectorAll('.operations__tab');
-
 tabContainerEl.addEventListener('click', (e) => {
   const clickedTabEl = e.target.closest('.operations__tab');
 
@@ -61,10 +63,6 @@ tabContainerEl.addEventListener('click', (e) => {
 });
 
 // <-- Menu fade animation -->
-const navEl = document.querySelector('.nav'),
-  logoEl = document.querySelector('#logo'),
-  navLinkElems = document.querySelectorAll('.nav__link');
-
 navEl.addEventListener('mouseover', changeOpacity.bind(0.5));
 navEl.addEventListener('mouseout', changeOpacity.bind(1));
 
@@ -79,24 +77,29 @@ function changeOpacity(e) {
 }
 
 // <-- Sticky navigation -->
-const section1Coords = section1El.getBoundingClientRect(),
-  navCoords = navEl.getBoundingClientRect();
+const navElHeight = navEl.getBoundingClientRect().height,
+  headerObserver = new IntersectionObserver(stickyNav, {
+    root: null,
+    threshold: 0,
+    rootMargin: `-${navElHeight}px`,
+  });
+headerObserver.observe(headerEl);
 
-window.addEventListener('scroll', () => {
-  window.scrollY > section1Coords.top - navCoords.height
-    ? navEl.classList.add('sticky')
-    : navEl.classList.remove('sticky');
-});
+function stickyNav(entries) {
+  const [entry] = entries;
+  entry.isIntersecting
+    ? navEl.classList.remove('sticky')
+    : navEl.classList.add('sticky');
+}
 
 // <-- Cookies message -->
-const header = document.querySelector('.header'),
-  message = document.createElement('div');
+const message = document.createElement('div');
 
 message.classList.add('cookie-message');
 message.style.backgroundColor = '#37383d';
 message.innerHTML =
   'We use cookies for impoved functionality and analytics.<button class="btn btn--close-cookie" > Got it!</ > ';
-header.prepend(message);
+headerEl.prepend(message);
 
 document.querySelector('.btn--close-cookie').addEventListener('click', () => {
   message.parentElement.removeChild(message);
