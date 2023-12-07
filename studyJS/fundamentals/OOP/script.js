@@ -1,7 +1,47 @@
 'use strict';
 
+// <-- Setters and Getters -->
+settersAndGetters();
+function settersAndGetters() {
+  const account = {
+    owner: 'Tom',
+    movements: [100, 510, 230, 400],
+
+    get latest() {
+      return this.movements.at(-1);
+    },
+
+    set latest(value) {
+      this.movements.push(value);
+    },
+  };
+  account.latest = 50;
+  console.log(account.latest); // 50
+
+  class Person {
+    constructor(fullName, birthYear) {
+      this.fullName = fullName;
+      this.birthYear = birthYear;
+    }
+
+    get age() {
+      return new Date().getFullYear() - this.birthYear;
+    }
+
+    set fullName(value) {
+      if (!value.includes(' ')) throw new Error('wrong fullName value');
+      this._fullName = value;
+    }
+  }
+
+  const bob = new Person('Bob Karter', 2002);
+  console.log(bob.age); // 21
+  bob.fullName = 'Bob Builder';
+  console.log(bob); // Person { _fullName: 'Bob Builder', birthYear: 2002 }
+}
+
 // <-- ES6 Classes -->
-classes();
+// classes();
 function classes() {
   class Person {
     constructor(firstName, birthYear) {
