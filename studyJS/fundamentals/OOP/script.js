@@ -1,7 +1,30 @@
 'use strict';
 
+// <-- ES6 Classes -->
+classes();
+function classes() {
+  class Person {
+    constructor(firstName, birthYear) {
+      this.firstName = firstName;
+      this.birthYear = birthYear;
+    }
+
+    // methods will be added to .prototype property
+    displayAge() {
+      console.log(new Date().getFullYear() - this.birthYear);
+    }
+  }
+
+  const kastastin = new Person('Kostya', 2002);
+  kastastin.displayAge();
+
+  // 1. Classes are not hoisted
+  // 2. Classes are first-class citizens
+  // 3. Classes are executed in strict mode
+}
+
 // <-- Prototypal Inheritance on Built-In Objects -->
-prototypalInheritance();
+// prototypalInheritance();
 function prototypalInheritance() {
   const arr = [1, 2, 3, 4, 5, 5, 5];
   console.log(arr.__proto__ === Array.prototype); // true
