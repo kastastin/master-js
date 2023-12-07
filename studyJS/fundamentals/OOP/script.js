@@ -1,7 +1,20 @@
 'use strict';
 
+// <-- Prototypal Inheritance on Built-In Objects -->
+prototypalInheritance();
+function prototypalInheritance() {
+  const arr = [1, 2, 3, 4, 5, 5, 5];
+  console.log(arr.__proto__ === Array.prototype); // true
+
+  Array.prototype.getUniqueElems = function () {
+    return [...new Set(this)];
+  };
+
+  console.log(arr.getUniqueElems()); // [ 1, 2, 3, 4, 5 ]
+}
+
 // <-- Prototypes -->
-prototypes();
+// prototypes();
 function prototypes() {
   const Person = function (firstName, birthYear) {
     this.firstName = firstName;
