@@ -1,7 +1,43 @@
 'use strict';
 
+// <-- Inheritance Between Classes: Constructor Functions -->
+inheritanceConstructor();
+function inheritanceConstructor() {
+  const Person = function (firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  };
+
+  Person.prototype.displayAge = function () {
+    console.log(new Date().getFullYear() - this.birthYear);
+  };
+
+  const Student = function (firstName, birthYear, course) {
+    Person.call(this, firstName, birthYear);
+    this.course = course;
+  };
+
+  // Linking prototypes
+  Student.prototype = Object.create(Person.prototype);
+
+  Student.prototype.intoduce = function () {
+    console.log(`My name is ${this.firstName}, I study ${this.course}`);
+  };
+
+  const tom = new Student('Tom', 2000, 'WEB');
+  tom.intoduce(); // My name is Tom, I study WEB
+  tom.displayAge(); // 23
+
+  console.log(tom instanceof Student); // true
+  console.log(tom instanceof Person); // true
+  console.log(tom instanceof Object); // true
+
+  console.log(Student.prototype.constructor); // Person
+  Student.prototype.constructor = Student;
+}
+
 // <-- Object.create -->
-objectCreate();
+// objectCreate();
 function objectCreate() {
   const PersonProto = {
     init(firstName, birthYear) {
