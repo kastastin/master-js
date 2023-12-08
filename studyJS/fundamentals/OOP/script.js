@@ -1,7 +1,28 @@
 'use strict';
 
+// <-- Static Methods -->
+staticMethods();
+function staticMethods() {
+  class Person {
+    constructor(firstName) {
+      this.firstName = firstName;
+    }
+
+    static hey() {
+      console.log('Hey');
+    }
+  }
+
+  Person.bye = function () {
+    console.log(`Bye`);
+  };
+
+  Person.hey(); // Hey
+  Person.bye(); // Bye
+}
+
 // <-- Setters and Getters -->
-settersAndGetters();
+// settersAndGetters();
 function settersAndGetters() {
   const account = {
     owner: 'Tom',
