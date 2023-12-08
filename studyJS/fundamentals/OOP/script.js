@@ -1,7 +1,37 @@
 'use strict';
 
+// <-- Inheritance Between Classes: ES6 Classes -->
+inheritanceClassesES6();
+function inheritanceClassesES6() {
+  class Person {
+    constructor(firstName, birthYear) {
+      this.firstName = firstName;
+      this.birthYear = birthYear;
+    }
+
+    displayAge() {
+      console.log(new Date().getFullYear() - this.birthYear);
+    }
+  }
+
+  class Student extends Person {
+    constructor(firstName, birthYear, course) {
+      super(firstName, birthYear);
+      this.course = course;
+    }
+
+    intoduce() {
+      console.log(`My name is ${this.firstName}, I study ${this.course}`);
+    }
+  }
+
+  const tom = new Student('Tom', 2000, 'WEB');
+  tom.intoduce(); // My name is Tom, I study WEB
+  tom.displayAge(); // 23
+}
+
 // <-- Inheritance Between Classes: Constructor Functions -->
-inheritanceConstructor();
+// inheritanceConstructor();
 function inheritanceConstructor() {
   const Person = function (firstName, birthYear) {
     this.firstName = firstName;
