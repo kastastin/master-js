@@ -1,7 +1,30 @@
 'use strict';
 
+// <-- Object.create -->
+objectCreate();
+function objectCreate() {
+  const PersonProto = {
+    init(firstName, birthYear) {
+      this.firstName = firstName;
+      this.birthYear = birthYear;
+    },
+    displayAge() {
+      console.log(new Date().getFullYear() - this.birthYear);
+    },
+  };
+
+  const bob = Object.create(PersonProto);
+  bob.birthYear = 2002;
+  bob.displayAge(); // 21
+  console.log(bob.__proto__ === PersonProto); // true
+
+  const tom = Object.create(PersonProto);
+  tom.init('Tom', 2000);
+  tom.displayAge(); // 23
+}
+
 // <-- Static Methods -->
-staticMethods();
+// staticMethods();
 function staticMethods() {
   class Person {
     constructor(firstName) {
