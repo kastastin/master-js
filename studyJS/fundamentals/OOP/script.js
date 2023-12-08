@@ -1,7 +1,36 @@
 'use strict';
 
+// <-- Inheritance Between Classes: Object.create -->
+inheritanceObjectCreate();
+function inheritanceObjectCreate() {
+  const PersonProto = {
+    init(firstName, birthYear) {
+      this.firstName = firstName;
+      this.birthYear = birthYear;
+    },
+    displayAge() {
+      console.log(new Date().getFullYear() - this.birthYear);
+    },
+  };
+
+  const StudentProto = Object.create(PersonProto);
+  StudentProto.init = function (firstName, birthYear, course) {
+    PersonProto.init.call(this, firstName, birthYear);
+    this.course = course;
+  };
+
+  StudentProto.intoduce = function () {
+    console.log(`My name is ${this.firstName}, I study ${this.course}`);
+  };
+
+  const tom = Object.create(StudentProto);
+  tom.init('Tom', 2000, 'WEB');
+  tom.intoduce(); // My name is Tom, I study WEB
+  tom.displayAge(); // 23
+}
+
 // <-- Inheritance Between Classes: ES6 Classes -->
-inheritanceClassesES6();
+// inheritanceClassesES6();
 function inheritanceClassesES6() {
   class Person {
     constructor(firstName, birthYear) {
