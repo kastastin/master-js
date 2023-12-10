@@ -1,7 +1,33 @@
 'use strict';
 
+// <-- Account Class Example -->
+accountExample();
+function accountExample() {
+  class Account {
+    constructor(owner, currency, pin) {
+      this.owner = owner;
+      this.currency = currency;
+      this.pin = pin;
+      this.movements = [];
+    }
+
+    deposit(value) {
+      this.movements.push(value);
+    }
+
+    withdraw(value) {
+      this.deposit(-value);
+    }
+  }
+
+  const acc1 = new Account('Bob', 'EUR', 1111);
+  acc1.deposit(100);
+  acc1.withdraw(50);
+  console.log(acc1);
+}
+
 // <-- Inheritance Between Classes: Object.create -->
-inheritanceObjectCreate();
+// inheritanceObjectCreate();
 function inheritanceObjectCreate() {
   const PersonProto = {
     init(firstName, birthYear) {
