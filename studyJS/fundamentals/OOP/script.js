@@ -1,7 +1,35 @@
 'use strict';
 
+// <-- Encapsulation: Private Class Fields and Methods -->
+encapsulation();
+function encapsulation() {
+  class Account {
+    // Public field
+    locale = navigator.language;
+
+    // Private field
+    #movements = [];
+    #pin;
+
+    constructor(owner, pin) {
+      this.owner = owner;
+      this.#pin = pin;
+    }
+
+    // Public method
+    getMovements() {
+      return this.#movements;
+    }
+
+    // Private method
+    #approveLoan(value) {
+      return true;
+    }
+  }
+}
+
 // <-- Account Class Example -->
-accountExample();
+// accountExample();
 function accountExample() {
   class Account {
     constructor(owner, currency, pin) {
