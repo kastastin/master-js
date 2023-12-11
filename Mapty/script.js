@@ -13,21 +13,33 @@ const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
 
 navigator.geolocation.getCurrentPosition(
   (position) => {
-    console.log(position);
     const { latitude: lat } = position.coords;
-    const { longitude: lon } = position.coords;
-    const coords = [lat, lon];
-
+    const { longitude: lng } = position.coords;
+    const coords = [lat, lng];
     const map = L.map('map').setView(coords, 13);
 
     L.tileLayer(
       'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png'
     ).addTo(map);
 
-    L.marker(coords)
-      .addTo(map)
-      .bindPopup('A pretty CSS popup.<br> Easily customizable.')
-      .openPopup();
+    map.on('click', (mapEvent) => {
+      const { lat, lng } = mapEvent.latlng;
+      const clickedCoords = [lat, lng];
+
+      L.marker(clickedCoords)
+        .addTo(map)
+        .bindPopup(
+          L.popup({
+            maxWidth: 250,
+            minWidth: 100,
+            autoClose: false,
+            closeOnClick: false,
+            className: 'running-popup',
+          })
+        )
+        .setPopupContent('Workout')
+        .openPopup();
+    });
   },
   () => {
     alert('Could not get your position');
