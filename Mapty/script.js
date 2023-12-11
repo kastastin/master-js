@@ -16,10 +16,18 @@ navigator.geolocation.getCurrentPosition(
     console.log(position);
     const { latitude: lat } = position.coords;
     const { longitude: lon } = position.coords;
+    const coords = [lat, lon];
 
-    console.log(
-      `https://www.google.com/maps/@${lat},${lon},16z?hl=uk-UK&entry=ttu`
-    );
+    const map = L.map('map').setView(coords, 13);
+
+    L.tileLayer(
+      'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png'
+    ).addTo(map);
+
+    L.marker(coords)
+      .addTo(map)
+      .bindPopup('A pretty CSS popup.<br> Easily customizable.')
+      .openPopup();
   },
   () => {
     alert('Could not get your position');
